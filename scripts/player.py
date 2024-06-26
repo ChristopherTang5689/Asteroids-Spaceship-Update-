@@ -15,6 +15,8 @@ class Player(pygame.sprite.Sprite):
         self.rotation_speed = 5
         self.acceleration = 0.2
         self.friction = 0.99
+        self.last_shot_time = pygame.time.get_ticks()  # Initialize the last shot time
+        self.shoot_delay = 100  # Set delay to 5 seconds (5000 milliseconds)
 
     def update(self):
         self.velocity *= self.friction
@@ -25,8 +27,6 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.rect.center)
 
         self.wrap_around_screen()
-
-        
 
     def wrap_around_screen(self):
         if self.rect.left < 0:
@@ -49,3 +49,10 @@ class Player(pygame.sprite.Sprite):
 
     def decelerate(self):
         self.velocity -= pygame.math.Vector2(self.acceleration, 0).rotate(-self.angle)
+
+    def can_shoot(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_shot_time >= self.shoot_delay:
+            self.last_shot_time = current_time
+            return True
+        return False
